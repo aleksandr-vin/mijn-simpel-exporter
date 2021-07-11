@@ -35,7 +35,7 @@ scrape_interval = config['main'].getint('scrape-interval-minutes', 15) # min
 s = Session(cookie_jar)
 
 i = Info('mijn_simpel_exporter', 'Description of info')
-i.info({'version': 'dev', 'port': str(port), 'scrape-interval-minutes': str(scrape_interval)})
+i.info({'version': 'dev', 'port': str(port), 'scrape_interval_minutes': str(scrape_interval)})
 
 @LOGIN_TIME.time()
 def login(username, password):
