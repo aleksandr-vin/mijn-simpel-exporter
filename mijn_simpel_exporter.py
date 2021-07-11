@@ -14,6 +14,8 @@ if len(sys.argv) > 1:
 else:
     config.read('mijn_simpel_exporter.ini')
 
+logging.basicConfig(level=logging.DEBUG)
+
 SCRAPE_TIME = Summary('scrape_processing_seconds', 'Time spent processing scrape of mijn simpel')
 LOGIN_TIME = Summary('login_processing_seconds', 'Time spent processing login on mijn simpel')
 SUBSCRIPTIONS_TIME = Summary('subscriptions_processing_seconds', 'Time spent processing subscriptions on mijn simpel')
@@ -33,7 +35,7 @@ scrape_interval = config['main'].getint('scrape-interval-minutes', 15) # min
 s = Session(cookie_jar)
 
 i = Info('mijn_simpel_exporter', 'Description of info')
-i.info({'version': 'dev', 'port': port, 'scrape-interval-minutes': scrape_interval})
+i.info({'version': 'dev', 'port': str(port), 'scrape-interval-minutes': str(scrape_interval)})
 
 @LOGIN_TIME.time()
 def login(username, password):
