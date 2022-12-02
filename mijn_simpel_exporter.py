@@ -50,18 +50,21 @@ def usage_summary(subscription_id, msisdn):
     subscription = s.subscription(subscription_id)
     resp = subscription.usage_summary()
     assert(resp)
-    if resp['dataAmountLeft']:
-        DATA_AMOUNT_LEFT.labels(subscription=subscription_id, msisdn=msisdn).set(resp['dataAmountLeft'])
-    if resp['oneOffBundleAmountLeft']:
-        ONE_OFF_BUNDLE_AMOUNT_LEFT.labels(subscription=subscription_id, msisdn=msisdn).set(resp['oneOffBundleAmountLeft'])
-    if resp['ceilingConsumption']:
-        CEILING_CONSUMPTION.labels(subscription=subscription_id, msisdn=msisdn).set(resp['ceilingConsumption'])
-    if resp['abroadDataAmountLeft']:
-        ABROAD_DATA_AMOUNT_LEFT.labels(subscription=subscription_id, msisdn=msisdn).set(resp['abroadDataAmountLeft'])
-    if resp['smsAmountLeft']:
-        SMS_AMOUNT_LEFT.labels(subscription=subscription_id, msisdn=msisdn).set(resp['smsAmountLeft'])
-    if resp['voiceAmountLeft']:
-        VOICE_AMOUNT_LEFT.labels(subscription=subscription_id, msisdn=msisdn).set(resp['voiceAmountLeft'])
+
+    def setLabel(name, metric):
+        if name in resp:
+            data = resp[name]
+            if 'amount' in data:
+                amount = data['amount']
+                if amount is not None:
+                    metric.labels(subscription=subscription_id, msisdn=msisdn).set(amount)
+
+    setLabel('data', DATA_AMOUNT_LEFT)
+    setLabel('oneOffBundle', ONE_OFF_BUNDLE_AMOUNT_LEFT)
+    setLabel('ceiling', CEILING_CONSUMPTION)
+    setLabel('abroadData', ABROAD_DATA_AMOUNT_LEFT)
+    setLabel('sms', SMS_AMOUNT_LEFT)
+    setLabel('voice', VOICE_AMOUNT_LEFT)
 
 def init():
     if not(os.path.exists(cookie_jar)):
